@@ -1,5 +1,5 @@
 
-name: Deploy Code from ZIP
+name: Deploy
 
 on:
   workflow_dispatch:
