@@ -3,6 +3,8 @@ name: Deploy Code from ZIP
 
 on:
   workflow_dispatch:
+  
+permissions: write-all
 
 jobs:
   deploy:
