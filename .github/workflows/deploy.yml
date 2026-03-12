@@ -13,7 +13,7 @@ jobs:
 
       - name: Unzip code.zip
         run: |
-          if [ -f "code.zip" ]; then
+          if [ -f "HaitunTV_1.1.0.zip" ]; then
             unzip -o HaitunTV_1.1.0.zip -d ./temp_extract
           else
             echo "No code.zip found"
