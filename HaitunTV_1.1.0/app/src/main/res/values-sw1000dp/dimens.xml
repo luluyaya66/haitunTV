@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 大屏设备的菜单尺寸定义 -->
+    <dimen name="menu_first_level_width">130dp</dimen>
+    <dimen name="menu_second_level_width">200dp</dimen>
+    <dimen name="menu_third_level_width">200dp</dimen>
+    <dimen name="menu_header_height">48dp</dimen>
+    
+    <!-- 菜单项内边距 -->
+    <dimen name="menu_item_padding_horizontal">15dp</dimen>
+    <dimen name="menu_item_padding_vertical">15dp</dimen>
+    
+    <!-- 字体大小 -->
+    <dimen name="menu_header_text_size">20sp</dimen>
+    <dimen name="menu_group_text_size">18sp</dimen>
+    <dimen name="menu_channel_text_size">15sp</dimen>
+    <dimen name="menu_epg_text_size">10sp</dimen>
+</resources>

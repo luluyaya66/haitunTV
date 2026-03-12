@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <!-- 主内容区域 -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- EXO PlayerView容器 -->
+        <FrameLayout
+            android:id="@+id/player_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/player_container_background" />
+
+        <!-- 启动画面 -->
+        <RelativeLayout
+            android:id="@+id/splash_screen"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/tv_background"
+            android:visibility="visible">
+
+            <ImageView
+                android:id="@+id/splash_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/launcherbg"
+                android:contentDescription="@string/splash_screen_desc" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/splash_screen_text"
+                android:textColor="@color/white"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:shadowColor="@color/text_primary"
+                android:shadowDx="2"
+                android:shadowDy="2"
+                android:shadowRadius="4" />
+
+        </RelativeLayout>
+
+        <!-- 时间显示 -->
+        <TextView
+            android:id="@+id/time_display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="16dp"
+            android:textColor="@color/white"
+            android:textSize="24sp"
+            android:background="@null"
+            android:backgroundTint="@null"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:clickable="false"
+            android:longClickable="false"
+            android:visibility="gone" />
+
+        <!-- 网速显示 -->
+        <TextView
+            android:id="@+id/network_speed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="16dp"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:background="@null"
+            android:backgroundTint="@null"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:clickable="false"
+            android:longClickable="false"
+            android:visibility="gone" />
+
+        <!-- 顶部频道信息（将被隐藏） -->
+        <TextView
+            android:id="@+id/channel_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_margin="16dp"
+            android:text="@string/channel_info_default"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            android:visibility="gone" />
+
+        <!-- 加载进度条（将被隐藏） -->
+        <ProgressBar
+            android:id="@+id/loading_progress"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerInParent="true"
+            android:visibility="gone" />
+
+        <!-- 底部频道信息条 -->
+        <LinearLayout
+            android:id="@+id/channel_info_bar"
+            android:layout_width="500dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="50dp"
+            android:background="@drawable/channel_info_bar_background"
+            android:orientation="horizontal"
+            android:paddingLeft="12dp"
+            android:paddingTop="10dp"
+            android:paddingRight="12dp"
+            android:paddingBottom="10dp"
+            android:visibility="gone">
+
+            <!-- 左侧台标 -->
+            <ImageView
+                android:id="@+id/channel_info_logo"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="12dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/ic_tv"
+                android:contentDescription="@string/channel_logo_desc" />
+
+            <!-- 中间节目信息 -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_gravity="center_vertical">
+
+                <!-- 当前节目：正在播放: 节目名 -->
+                <TextView
+                    android:id="@+id/current_program_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <!-- 下一节目：时间 节目名 -->
+                <TextView
+                    android:id="@+id/next_program_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    android:layout_marginTop="4dp"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+            </LinearLayout>
+
+            <!-- 右侧线路信息 -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="12dp"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/source_info_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFFFFF"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="线路"
+                    android:textColor="#AAAAAA"
+                    android:textSize="10sp"
+                    android:layout_marginTop="2dp" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <!-- 左侧抽屉容器 -->
+    <LinearLayout
+        android:id="@+id/left_drawer_container"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:orientation="horizontal">
+        
+        <!-- 左侧一级抽屉 - 频道分组 -->
+        <LinearLayout
+            android:id="@+id/left_drawer"
+            android:layout_width="@dimen/menu_first_level_width"
+            android:layout_height="match_parent"
+            android:background="@color/menu_background"
+            android:orientation="vertical"
+            android:focusable="true"
+            android:clickable="true">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/menu_header_height"
+                android:background="@color/menu_header_background"
+                android:gravity="center"
+                android:text="@string/channel_list_title"
+                android:textColor="#ffffff"
+                android:textSize="@dimen/menu_header_text_size" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/group_list"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
+
+        </LinearLayout>
+
+        <!-- 左侧二级抽屉 - 频道列表 -->
+        <LinearLayout
+            android:id="@+id/left_sub_drawer"
+            android:layout_width="@dimen/menu_second_level_width"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@color/menu_background" 
+            android:visibility="gone"
+            android:focusable="true"
+            android:clickable="true">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/channel_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+        
+        <!-- 左侧三级抽屉 - EPG节目清单 -->
+        <LinearLayout
+            android:id="@+id/left_epg_drawer"
+            android:layout_width="@dimen/menu_third_level_width"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@color/menu_background"   
+            android:visibility="gone"
+            android:focusable="true"
+            android:clickable="true">
+
+            <TextView
+                android:id="@+id/epg_drawer_title"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/menu_header_height"
+                android:text="@string/epg_program_list_title"
+                android:textSize="@dimen/menu_header_text_size"
+                android:textColor="#ffffff"
+                android:gravity="center"
+                android:background="@color/menu_header_background" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/epg_program_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+        </LinearLayout>
+        
+    </LinearLayout>
+
+    <!-- 右侧抽屉容器 -->
+
+</androidx.drawerlayout.widget.DrawerLayout>

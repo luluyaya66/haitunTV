@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:color="#FFFF0000" android:state_selected="true" /> <!-- 红色，表示已收藏 -->
+    <item android:color="#80808080" android:state_selected="false" /> <!-- 灰色，表示未收藏 -->
+</selector>

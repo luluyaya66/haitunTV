@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 菜单尺寸定义 -->
+    <dimen name="menu_first_level_width">130dp</dimen>
+    <dimen name="menu_second_level_width">200dp</dimen>
+    <dimen name="menu_third_level_width">200dp</dimen>
+    <dimen name="menu_header_height">45dp</dimen>
+    <dimen name="menu_group_item_height">30dp</dimen>
+    
+    <!-- 菜单项内边距 -->
+    <dimen name="menu_item_padding_horizontal">15dp</dimen>
+    <dimen name="menu_item_padding_vertical">4dp</dimen>
+    
+    <!-- 字体大小 -->
+    <dimen name="menu_header_text_size">18sp</dimen>
+    <dimen name="menu_group_text_size">18sp</dimen>
+    <dimen name="menu_channel_text_size">15sp</dimen>
+    <dimen name="menu_epg_text_size">10sp</dimen>
+    <dimen name="epg_program_title_text_size">12sp</dimen>
+    <dimen name="epg_program_time_text_size">9sp</dimen>
+</resources>

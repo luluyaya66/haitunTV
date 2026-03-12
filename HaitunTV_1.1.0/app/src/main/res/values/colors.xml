@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<!-- 背景色 -->
+<color name="background_color">#F5F5F5</color>
+<color name="group_background">#E3F2FD</color>
+<color name="channel_background">#FFFFFF</color>
+<color name="selected_channel_background">#E8F5E8</color>
+<color name="primary_color">#3F51B5</color>
+
+<!-- 文字颜色 -->
+<color name="text_primary">#212121</color>
+<color name="text_secondary">#FFFFFF</color>
+<color name="text_hint">#BDBDBD</color>
+<color name="white">#FFFFFF</color>
+
+<!-- 状态颜色 -->
+<color name="success_color">#4CAF50</color>
+<color name="warning_color">#FF9800</color>
+<color name="error_color">#F44336</color>
+
+<!-- TV专用颜色 -->
+<color name="tv_background">#000000</color>
+<color name="tv_text_primary">#FFFFFF</color>
+<color name="tv_text_secondary">#FFFFFF</color>
+<color name="tv_selected_background">#33B5E5</color>
+<color name="tv_focused_background">#0099CC</color>
+<color name="sky_blue">#87CEEB</color> <!-- 天空蓝色 -->
+
+<!-- 播放器相关颜色 -->
+<color name="player_background">#000000</color>
+<color name="player_control_background">#00000000</color>
+<color name="player_text_primary">#FFFFFF</color>
+<color name="player_text_secondary">#CCCCCC</color>
+
+<!-- 设置界面颜色 -->
+<color name="settings_background">#F5F5F5</color>
+<color name="settings_item_background">#FFFFFF</color>
+<color name="settings_divider">#E0E0E0</color>
+
+<!-- 授权对话框颜色 -->
+<color name="auth_dialog_background">#800099CC</color> <!-- 蓝色半透明 -->
+
+<!-- 频道信息条颜色 -->
+<color name="channel_info_bar_background">#80808080</color> <!-- 灰色半透明 -->
+
+<!-- 菜单标题背景色 -->
+<color name="menu_header_background">#801a1a1a</color> <!-- 灰色，透明度50% -->
+
+<!-- 菜单背景色 -->
+<color name="menu_background">#801a1a1a</color> <!-- 深灰，透明度50% -->
+<color name="menu_item_background">#401a1a1a</color>
+<color name="menu_item_selected">#FF33B5E5</color> <!-- 选中项蓝色 -->
+<color name="menu_item_focused">#80808080</color> <!-- 焦点灰色 -->
+
+</resources>
