@@ -14,7 +14,7 @@ jobs:
       - name: Unzip code.zip
         run: |
           if [ -f "code.zip" ]; then
-            unzip -o code.zip -d ./temp_extract
+            unzip -o HaitunTV_1.1.0.zip -d ./temp_extract
           else
             echo "No code.zip found"
             exit 1
