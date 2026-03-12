@@ -1,0 +1,34 @@
+
+name: Deploy Code from ZIP
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Unzip code.zip
+        run: |
+          if [ -f "code.zip" ]; then
+            unzip -o code.zip -d ./temp_extract
+          else
+            echo "No code.zip found"
+            exit 1
+          fi
+
+      - name: Move files to root
+        run: |
+          shopt -s dotglob
+          mv ./temp_extract/* .
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Deploy code from code.zip"
+          git push
