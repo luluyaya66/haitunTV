@@ -25,7 +25,9 @@
 - **开发语言**: Java - **播放引擎**: IjkPlayer - **图片加载**: Glide - **网络请求**: OkHttp
 
 如果对你有帮助，就支持一下我吧
+<br>
 <img width=200 src=appreciate.png>
+</br>
 
 ## 参考应用画面
 <img width=800 src=/screenshot/165356.png>
