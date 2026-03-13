@@ -65,24 +65,15 @@ import com.tv.mydiy.data.repository.ChannelRepository;
 import java.util.ArrayList;
 import java.util.List;
 
-// 夏杰语音相关导入
-import com.peasun.aispeech.aiopen.AIOpenReceiver;
 
 public class MainActivity extends AppCompatActivity implements 
         ChannelAdapter.OnChannelClickListener,
         GroupAdapter.OnGroupClickListener {
     
     private static final String TAG = "MainActivity";
-
     private Channel currentChannel = null;
     private int currentGroupIndex = 0;
     private int currentChannelIndex = 0;
-
-    // 长按相关变量已迁移到KeyEventController
-    
-
-
-    // Views
     private DrawerLayout drawerLayout;
     private RecyclerView channelList;
     private RecyclerView groupList;
@@ -164,65 +155,30 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-        // 启用严格模式，帮助发现潜在问题
-        // 移除对BuildConfig.DEBUG的依赖，改用常量判断是否启用调试模式
-        // 在发布版本中设置为false，在调试版本中设置为true
-        // 注意：在主线程中进行磁盘IO操作会违反StrictMode策略，所以我们暂时禁用它
-
         setContentView(R.layout.activity_main);
-        
-        // 初始化Handler管理器
+
         handlerManager = new HandlerManager(this);
-        
-        // 初始化设置管理器
         settingsManager = new SettingsManager(this);
-        
-        // 初始化收藏管理器
         favoriteManager = new FavoriteManager(this);
-        
-        // 初始化网络管理器
         NetworkManager networkManager = new NetworkManager();
-        
-        // 初始化频道管理器
         channelManager = new com.tv.mydiy.channel.ChannelManager(networkManager);
-        
-        // ========== 初始化新架构组件 ==========
         initArchitectureComponents();
-        
-        // 提前初始化关键视图组件（特别是启动画面）
         initViewsEarly();
-        
-        // 初始化播放控制器
         ijkPlayerAdapter = new IjkPlayerAdapter();
         playerController = new SimplePlayerController(this, ijkPlayerAdapter);
         isPlayerManagerInitialized = true; // 设置播放器管理器初始化完成标志
-        
 
-        
-        // 初始化UI更新管理器，暂时使用null值，稍后在initViews中重新初始化
         uiUpdater = new UiUpdater(timeDisplay, networkSpeed, null, null, settingsManager, handlerManager);
-        
-        // 初始化设置模块
         settingModule = new SettingModule(this, settingsManager);
-        
-        // 初始化授权管理器
         authorizationManager = new AuthorizationManager(this);
-        
-        // 初始化视图组件
         initViews();
-        
-        // 应用设置
         applyAllSettings();
-        
-        // 初始化完成后加载频道列表
         loadChannelList();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // 每次 Activity 恢复时，设置焦点到播放器容器
         if (playerContainer != null) {
             playerContainer.post(() -> playerContainer.requestFocus());
         }
@@ -232,15 +188,11 @@ public class MainActivity extends AppCompatActivity implements
      * 初始化新架构组件 (ViewModel和Controller)
      */
     private void initArchitectureComponents() {
-        // 初始化Repository
         channelRepository = new ChannelRepository(channelManager);
-
-        // 初始化ViewModels
         mainViewModel = new MainViewModel();
         channelViewModel = new ChannelViewModel();
         playerViewModel = new PlayerViewModel();
 
-        // 初始化Controllers
         splashScreenController = new SplashScreenController();
         channelInfoBarController = new ChannelInfoBarController(this);
         drawerMenuController = new DrawerMenuController();
@@ -253,17 +205,10 @@ public class MainActivity extends AppCompatActivity implements
         viewInitializerController = new ViewInitializerController(this);
     }
 
-
-
-    /**
-     * 提前初始化关键视图组件（特别是启动画面）
-     */
     private void initViewsEarly() {
-        // 初始化启动画面（必须在setContent之后立即执行）
+        
         splashScreen = findViewById(R.id.splash_screen);
         loadingProgress = findViewById(R.id.loading_progress);
-
-        // ========== 设置新架构组件的视图引用 ==========
         if (splashScreenController != null) {
             splashScreenController.setSplashScreen(splashScreen);
             splashScreenController.setLoadingProgress(loadingProgress);
@@ -272,59 +217,36 @@ public class MainActivity extends AppCompatActivity implements
     
     // 初始化视图组件
     private void initViews() {
-        
-        // 初始化默认频道列表URL
+
         defaultChannelUrl = getString(R.string.default_channel_url);
-        
-        // 初始化菜单管理器
         mainMenuManager = new MainMenuManager(this);
-        
-        // 初始化各模块视图
         initPlayerViews();
         initDisplayViews();
         initMenuViews();
-        
-        // 初始化菜单管理器视图
+
         if (mainMenuManager != null) {
             mainMenuManager.initMenuViews();
         }
-        
-        // 应用保存的解码器设置
-        applyAllSettings(); // 使用统一的方法应用所有设置
-        
-        // 确保首次播放标志重置
 
-        // 检查是否所有初始化已完成
+        applyAllSettings(); // 使用统一的方法应用所有设置
+
         checkAllInitializationComplete();
-        
-        // 初始化夏杰语音支持
-        if (voiceController != null) {
-            voiceController.initializeXiajieVoice();
-        }
-        
+  
     }
-    
-    /**
-     * 初始化播放器相关视图组件
-     */
+
     private void initPlayerViews() {
         playerContainer = findViewById(R.id.player_container);
-        // 确保播放容器可以获取焦点
         if (playerContainer != null) {
             playerContainer.setFocusable(true);
             playerContainer.setFocusableInTouchMode(true);
             playerContainer.setBackgroundResource(R.drawable.player_container_background);
         }
-        
-        // 设置播放器视图
+
         setupPlayerView();
         
 
     }
     
-    /**
-     * 初始化显示相关视图组件
-     */
     private void initDisplayViews() {
         channelInfo = findViewById(R.id.channel_info);
         splashScreen = findViewById(R.id.splash_screen);
@@ -334,15 +256,10 @@ public class MainActivity extends AppCompatActivity implements
         nextProgramTitle = findViewById(R.id.next_program_title);
         sourceInfoText = findViewById(R.id.source_info_text);
         channelInfoLogo = findViewById(R.id.channel_info_logo);
-        // 时间显示组件
         timeDisplay = findViewById(R.id.time_display);
-        // 网速显示组件
         networkSpeed = findViewById(R.id.network_speed);
     }
-    
-    /**
-     * 初始化菜单相关视图组件
-     */
+
     private void initMenuViews() {
         drawerLayout = findViewById(R.id.drawer_layout);
         groupList = findViewById(R.id.group_list);
@@ -351,41 +268,31 @@ public class MainActivity extends AppCompatActivity implements
         leftEpgDrawer = findViewById(R.id.left_epg_drawer);
         epgProgramList = findViewById(R.id.epg_program_list);
         epgDrawerTitle = findViewById(R.id.epg_drawer_title);
-        
-        // 设置DrawerLayout的scrim颜色为透明，避免菜单打开时整个屏幕变暗
+
         if (drawerLayout != null) {
             drawerLayout.setScrimColor(android.graphics.Color.TRANSPARENT);
-            // 禁用scrim动画，防止出现瞬时透明蒙层效果
         }
-        
-        // 确保左侧抽屉容器填充整个屏幕高度
+
         View leftDrawerContainer = findViewById(R.id.left_drawer_container);
         if (leftDrawerContainer != null) {
-            // 强制设置高度为MATCH_PARENT
             DrawerLayout.LayoutParams params = (DrawerLayout.LayoutParams) leftDrawerContainer.getLayoutParams();
             params.height = DrawerLayout.LayoutParams.MATCH_PARENT;
             leftDrawerContainer.setLayoutParams(params);
         }
-        
-        // 初始化设置管理器
+
         if (settingsManager == null) {
             settingsManager = new SettingsManager(this);
         }
         
         channelGroups = new ArrayList<>();
         List<ChannelGroup> channelGroupsForMenu = new ArrayList<>();
-        
 
-        
-        // 初始化设置菜单
         initSettingsMenu();
         
-        // 设置SettingModule的视图引用
         if (settingModule != null && settingsList != null && settingsDetailList != null && rightSubDrawer != null) {
             settingModule.setViews(settingsList, settingsDetailList, rightSubDrawer);
         }
-        
-        // 初始化频道适配器
+
         if (channelGroups != null) {
             channelAdapter = new ChannelAdapter(channelGroups, new ChannelAdapter.OnChannelClickListener() {
                 @Override
@@ -393,7 +300,6 @@ public class MainActivity extends AppCompatActivity implements
                     currentChannelIndex = channelIndex;
                     currentGroupIndex = groupIndex;
                     playChannel(channel);
-                    // 关闭抽屉
                     if (drawerLayout != null) {
                         drawerLayout.closeDrawer(GravityCompat.START);
                     }
@@ -401,57 +307,41 @@ public class MainActivity extends AppCompatActivity implements
 
                 @Override
                 public void onEpgInfoClick(Channel channel) {
-                    // 显示该频道的完整EPG节目清单
                     showEpgProgramList(channel);
                 }
             }, settingsManager, MainActivity.this.getApplicationContext()); // 传递SettingsManager实例和Context
-            
-            // 设置数据变化监听器
-            // 数据变化时更新频道组列表
+
             channelAdapter.setOnDataChangedListener(this::updateGroupList);
-            
-            // 初始化EPG控制器 - 确保使用包含所有频道组的channelAdapter
+
             EpgManager epgManager = new EpgManager(this);
             epgController = new EpgController(this, epgManager, settingsManager, channelAdapter, this);
-            
-            // 重新初始化UI更新管理器，使用正确的channelAdapter和epgController
             uiUpdater = new UiUpdater(timeDisplay, networkSpeed, channelAdapter, epgController, settingsManager, handlerManager);
         }
-        
-        // 默认展开频道组
         if (channelGroups != null && !channelGroups.isEmpty()) {
             channelGroups.get(0).setExpanded(true);
         }
 
-        // 初始化分组适配器
         groupAdapter = new GroupAdapter(channelGroupsForMenu, (group, groupIndex) -> {
-            // 隐藏其他可能打开的抽屉
             if (mainMenuManager != null && mainMenuManager.getChannelMenuManager() != null) {
                 mainMenuManager.getChannelMenuManager().hideEpgDrawer();
             } else {
                 hideLeftEpgDrawer(); // Fallback to original method
             }
 
-            // 更新当前选中的频道组索引
             currentGroupIndex = groupIndex;
 
-            // 更新频道列表为所选分组的内容并处理焦点转移
-            // 确保在主线程中更新数据
             runOnUiThread(() -> {
                 // 添加同步检查，确保数据一致性
                 synchronized (MainActivity.this) {
                     if (channelGroups != null && groupIndex >= 0 && groupIndex < channelGroups.size()) {
-                        // 更新当前选中的频道组索引，以高亮显示选中的组
                         if (groupAdapter != null) {
                             groupAdapter.setCurrentGroupIndex(groupIndex);
                         }
 
-                        // 同时更新EPG控制器中的ChannelAdapter引用，确保EPG匹配使用完整数据
                         if (epgController != null && channelAdapter != null) {
                             epgController.updateChannelAdapter(channelAdapter);
                         }
 
-                        // 使用 menuNavigationController 来显示频道列表并处理焦点转移
                         if (menuNavigationController != null) {
                             menuNavigationController.showChannelList();
                         }
@@ -499,33 +389,24 @@ public class MainActivity extends AppCompatActivity implements
             settingsDetailList.setFocusable(true);
             settingsDetailList.setDescendantFocusability(RecyclerView.FOCUS_AFTER_DESCENDANTS);
         }
-        
-        // 确保右侧二级抽屉可以接收焦点和点击事件
+
         if (rightSubDrawer != null) { // 添加空值检查
             rightSubDrawer.setFocusable(true);
             rightSubDrawer.setClickable(true);
         }
-        
-        // 确保左侧抽屉可以接收焦点和点击事件
+
         LinearLayout leftDrawer = findViewById(R.id.left_drawer);
         if (leftDrawer != null) {
             leftDrawer.setFocusable(true);
             leftDrawer.setClickable(true);
         }
 
-        // ========== 设置其他新架构组件的视图引用 ==========
+
         setupArchitectureViewReferences();
-        
-        // ========== 设置新Controller的依赖关系 ==========
         setupNewControllers();
-        
-        // ========== 设置ViewModel的LiveData观察者 ==========
         setupViewModelObservers();
     }
 
-    /**
-     * 设置新架构组件的视图引用
-     */
     private void setupArchitectureViewReferences() {
         // 设置 ChannelInfoBarController
         if (channelInfoBarController != null) {
@@ -590,7 +471,6 @@ public class MainActivity extends AppCompatActivity implements
             });
         }
 
-        // ========== 完全迁移：设置 TouchEventHandler 并实现完整逻辑 ==========
         if (touchEventHandler != null) {
             // 为TouchEventHandler设置完整的事件监听器
             touchEventHandler.setListener(new TouchEventHandler.TouchEventListener() {
@@ -613,7 +493,6 @@ public class MainActivity extends AppCompatActivity implements
                         } else if (leftEpgDrawer != null && leftEpgDrawer.getVisibility() == View.VISIBLE) {
                             leftEpgDrawer.setVisibility(View.GONE);
                         } else if (!drawerLayout.isDrawerOpen(GravityCompat.END)) {
-                            // 打开菜单前隐藏频道信息条（避免被误认为是蒙层）
                             hideChannelInfoBar();
                             drawerLayout.openDrawer(GravityCompat.START);
                             if (groupList != null) {
@@ -635,7 +514,6 @@ public class MainActivity extends AppCompatActivity implements
 
                 @Override
                 public void onDoubleClick(float x, float screenWidth) {
-                    // ========== 新架构的双击处理（完全迁移） ==========
                     if (x >= screenWidth / 2) {
                         if (drawerLayout != null) {
                             drawerLayout.openDrawer(GravityCompat.END);
@@ -671,7 +549,6 @@ public class MainActivity extends AppCompatActivity implements
 
                 @Override
                 public void onLongPress(float x, float screenWidth) {
-                    // ========== 新架构的长按处理（预留，未来可实现） ==========
                     // 长按逻辑可以在这里实现
                 }
             });
@@ -683,9 +560,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    /**
-     * 设置新Controller的依赖关系
-     */
     private void setupNewControllers() {
         // 设置 KeyEventController
         if (keyEventController != null) {
@@ -1294,10 +1168,7 @@ public class MainActivity extends AppCompatActivity implements
             });
         }
     }
-    
-    /**
-     * 初始化设置菜单相关视图
-     */
+
     private void initSettingsMenu() {
         // 确保在initViews中已经初始化了drawerLayout
         if (drawerLayout == null) {
@@ -1434,17 +1305,13 @@ public class MainActivity extends AppCompatActivity implements
                     settingsList.setFocusable(true);
                     settingsList.setDescendantFocusability(RecyclerView.FOCUS_AFTER_DESCENDANTS);
                     mainMenuContainer.addView(settingsList);
-                    
-                    // 将占位视图和主菜单容器添加到rightDrawer
+
                     rightDrawer.addView(placeholderView);
                     rightDrawer.addView(mainMenuContainer);
-                    
-                    // 将右侧抽屉添加到主布局
                     drawerLayout.addView(rightDrawer);
                 }
             }
 
-            // 创建右侧子设置菜单作为主抽屉的子视图，使用LinearLayout实现覆盖效果
             rightSubDrawer = new LinearLayout(this);
             rightSubDrawer.setId(R.id.right_sub_drawer);
             rightSubDrawer.setBackgroundColor(android.graphics.Color.TRANSPARENT);
@@ -1505,20 +1372,13 @@ public class MainActivity extends AppCompatActivity implements
 
         }
     }
-    
 
-
-    /**
-     * 根据设置更新显示选项（时间、网速等）
-     */
     public void updateDisplaySettings() {
         // ========== 使用新架构组件（状态保持一致） ==========
         if (settingsManager == null) {
             return;
         }
-        
-        // ========== 原有逻辑保持不变（UiUpdater已有专门管理器） ==========
-        // 重新初始化UI更新管理器以确保使用最新的组件引用
+
         uiUpdater = new UiUpdater(timeDisplay, networkSpeed, channelAdapter, epgController, settingsManager, handlerManager);
         
         // 委托给UiUpdater处理
@@ -1526,13 +1386,6 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void changeChannel(int direction) {
-        // ========== 完全迁移：使用ChannelViewModel ==========
-        // ========== 注意：旧代码未完整注释，高复杂度模块 ==========
-        // ========== 如果出现问题，可随时恢复原有的状态同步策略 ==========
-        
-        // ========== 新架构实现（使用ChannelViewModel） ==========
-        
-        // 检查频道列表是否已加载完成
         if (!isChannelListLoaded) {
             Toast.makeText(this, "频道列表加载中，请稍候...", Toast.LENGTH_SHORT).show();
             return;
@@ -1612,7 +1465,6 @@ public class MainActivity extends AppCompatActivity implements
                     
                     playChannel(newChannel);
 
-                    // 更新频道列表中的当前播放频道标识
                     if (channelAdapter != null) {
                         if (android.os.Looper.myLooper() == android.os.Looper.getMainLooper()) {
                             channelAdapter.setCurrentGroupIndex(currentGroupIndex, currentChannelIndex);
@@ -1667,26 +1519,17 @@ public class MainActivity extends AppCompatActivity implements
 
                 @Override
                 public void surfaceDestroyed(@NonNull SurfaceHolder holder) {
-                    // 在Surface销毁时，需要解除与播放器的绑定
                     ijkPlayerAdapter.setDisplay(null);
                 }
             });
-            
-            // 注意：不要在这里设置OnInfoListener，因为它会覆盖SimplePlayerController中设置的监听器
-            // 视频渲染开始事件的处理由SimplePlayerController负责
+
         }
     }
-    
 
-    
-    // 添加检查并播放默认频道的方法
     public void checkAndPlayDefaultChannel() {
         // 重置日志记录标志，以便下次可以再次记录
         hasLoggedInitializationComplete = false;
-        
-              
-        // 确保所有初始化任务已完成并且频道列表已加载完成
-        // 注意：不再依赖EPG加载状态，因为EPG加载现在是可选的
+
         if (isChannelListLoaded && 
             channelGroups != null && !channelGroups.isEmpty() && playerController != null) {
             // 获取要播放的频道
@@ -1695,8 +1538,7 @@ public class MainActivity extends AppCompatActivity implements
             if (channelToPlay != null) {
                 playChannel(channelToPlay);
             }
-            
-            // 无论是否找到有效频道，都隐藏启动画面
+
             hideSplashScreen();
         } else if (isChannelListLoaded) {
             // 如果频道列表为空，也隐藏启动画面
@@ -1709,12 +1551,8 @@ public class MainActivity extends AppCompatActivity implements
                     loadChannelList();
                 }
             } else {
-                // 达到最大尝试次数，停止尝试
-                // 根据项目规范，即使无法获取当前频道也要尝试播放默认频道
-                // 在这种情况下，我们至少要隐藏启动画面
                 hideSplashScreen();
-                
-                // 显示错误信息给用户
+
                 runOnUiThread(() -> Toast.makeText(this, "无法加载频道列表，请检查网络连接或频道源设置", Toast.LENGTH_LONG).show());
             }
         }
@@ -1726,28 +1564,22 @@ public class MainActivity extends AppCompatActivity implements
         if (splashScreenController != null) {
             splashScreenController.hide();
         }
-        
-        // 立即设置启动画面隐藏标志和首次播放标志为false
+
         isSplashScreenHidden = true;
         isFirstPlay = false;
         if (channelInfoBarController != null) {
             channelInfoBarController.setFirstPlay(false);
         }
-        
-        // 启动画面隐藏后，如果当前有播放频道，显示信息条
+
         if (currentChannel != null) {
             showChannelInfoBar(currentChannel);
         }
-        
-        // 重置初始化完成日志标志，以便下次可以再次记录
+
         hasLoggedInitializationComplete = false;
     }
-    
-    // 添加检查所有初始化是否完成的方法
+
     private void checkAllInitializationComplete() {
-        
-        // 检查所有初始化任务是否完成（EPG加载现在是可选的，不阻塞初始化过程）
-        // 根据经验教训，确保所有必要组件都已正确初始化
+
         if (isChannelListLoaded && isPlayerManagerInitialized && playerController != null) {
             if (!hasLoggedInitializationComplete) {
                 hasLoggedInitializationComplete = true;
@@ -1779,10 +1611,6 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    /**
-     * 显示指定频道的EPG节目清单
-     * @param channel 频道对象
-     */
     private void showEpgProgramList(Channel channel) {
         // 检查EPG显示设置，如果用户设置不显示EPG，则直接返回
         if (settingsManager != null && !settingsManager.isShowEpg()) {
@@ -1834,8 +1662,7 @@ public class MainActivity extends AppCompatActivity implements
                             }
                         });
                     });
-            
-            // 添加淡入动画效果
+
             if (leftEpgDrawer != null) {
                 leftEpgDrawer.setAlpha(0f);
                 leftEpgDrawer.setVisibility(View.VISIBLE);
@@ -1850,81 +1677,55 @@ public class MainActivity extends AppCompatActivity implements
     
     // 添加统一应用所有设置的方法
     public void applyAllSettings() {
-        // ========== 使用新架构组件 ==========
-        // （设置模块逻辑主要在SettingsManager中，保持现状）
-        
-        // ========== 原有逻辑保持不变 ==========
-        // 应用解码器设置
         applyDecoderSettings();
-        
-        // 应用画面比例设置
+
         applyAspectRatioSettings();
-        
-        // 应用显示设置
+
         updateDisplaySettings();
     }
 
 
-    // 添加授权计时相关变量
-    private long firstChannelChangeTime = -1; // 第一次换台的时间戳
-    private static final long AUTH_CHECK_INTERVAL = 60 * 60 * 1000; // 60分钟检查一次
+    private long firstChannelChangeTime = -1; 
+    private static final long AUTH_CHECK_INTERVAL = 60 * 60 * 1000;
 
-    /**
-     * 获取当前播放的频道
-     * @return 当前播放的频道
-     */
     public Channel getCurrentChannel() {
-        // ========== 使用新架构组件 ==========
+
         if (playerViewModel != null) {
             Channel channel = playerViewModel.getCurrentChannel();
             if (channel != null) {
                 return channel;
             }
         }
-        // ========== 旧代码作为后备 ==========
         return currentChannel;
     }
 
-    /**
-     * 播放指定频道
-     * @param channel 要播放的频道
-     */
     public void playChannel(Channel channel) {
-        // ========== 使用新架构组件（状态同步） ==========
+
         if (playerViewModel != null && channel != null) {
             playerViewModel.setCurrentChannel(channel);
         }
-        
-        // ========== 原有逻辑保持不变 ==========
+
         if (channel == null) {
             return;
         }
-        
-        // 显示加载进度条
+
         showLoadingProgress();
-        // 设置加载进度条超时隐藏任务
         setLoadingProgressTimeout();
-        
-        // 通知播放控制器播放频道
+
         if (playerController != null) {
             playerController.playChannel(channel);
         } else {
             hideLoadingProgress();
         }
 
-        // 更新当前播放的频道引用
         currentChannel = channel;
 
-        // 更新底部频道信息栏显示
         updateChannelInfo(channel);
-        // 只有在启动画面已隐藏后才显示信息条，避免启动时过早显示
         if (!isFirstPlay || isSplashScreenHidden) {
             showChannelInfoBar(channel);
         }
 
-        // 更新频道列表中的当前播放频道标识
         if (channelAdapter != null) {
-            // 确保在主线程中更新
             if (android.os.Looper.myLooper() == android.os.Looper.getMainLooper()) {
                 channelAdapter.setCurrentPlayingChannel(channel);
             } else {
@@ -1932,14 +1733,12 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
 
-        // 更新频道组列表中当前播放频道所在组的高亮显示
         if (groupAdapter != null) {
-            // 查找当前播放频道所在的组索引
+
             int groupIndex = findGroupIndexForChannel(channel);
             groupAdapter.setCurrentGroupIndex(groupIndex);
         }
-        
-        // 设置一个较短的超时机制，确保加载进度条不会一直显示
+
         if (loadingProgress != null) {
             cancelLoadingProgressTimeout();
             if (handlerManager != null) {
@@ -1951,7 +1750,6 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
         
-        // 播放频道后，重新应用显示设置（包括网速显示）
         if (uiUpdater != null) {
             uiUpdater.updateDisplaySettings();
         }
@@ -1974,7 +1772,6 @@ public class MainActivity extends AppCompatActivity implements
         if (channelInfoBarController != null) {
             channelInfoBarController.hide();
         }
-        // 备用方案：直接隐藏视图
         if (channelInfoBar != null) {
             channelInfoBar.setVisibility(View.GONE);
         }
@@ -1986,29 +1783,20 @@ public class MainActivity extends AppCompatActivity implements
     public void applyAspectRatioSettings() {
     }
 
-    /**
-     * 显示加载进度条
-     */
     private void showLoadingProgress() {
-        // ========== 使用新架构组件 ==========
+
         if (splashScreenController != null) {
             splashScreenController.showLoadingProgress();
         }
     }
 
-    /**
-     * 隐藏加载进度条
-     */
     private void hideLoadingProgress() {
-        // ========== 使用新架构组件 ==========
+
         if (splashScreenController != null) {
             splashScreenController.hideLoadingProgress();
         }
     }
 
-    /**
-     * 设置加载进度条超时隐藏任务
-     */
     private void setLoadingProgressTimeout() {
         if (loadingProgress != null) {
             cancelLoadingProgressTimeout();
@@ -2022,18 +1810,13 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    /**
-     * 取消加载进度条超时隐藏任务
-     */
+
     private void cancelLoadingProgressTimeout() {
         if (handlerManager != null) {
             handlerManager.getLoadingProgressHandler().removeCallbacksAndMessages(null);
         }
     }
 
-    /**
-     * 更新频道组列表
-     */
     private void updateGroupList() {
         if (groupAdapter != null && channelGroups != null) {
             Runnable updateRunnable = () -> {
@@ -2057,50 +1840,31 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
     }
-    
-    /**
-     * 更新"我的收藏"组
-     */
+
     private void updateFavoriteGroup() {
         if (favoriteController != null) {
             favoriteController.updateFavoriteGroup(channelGroups);
         }
     }
 
-    /**
-     * 显示左侧二级抽屉
-     */
     private void showLeftSubDrawer() {
         if (leftSubDrawer != null) {
             leftSubDrawer.setVisibility(View.VISIBLE);
-            
-            // 将焦点设置到列表中的第一个频道
+          
             if (channelList != null && channelAdapter != null) {
-                // 使用post确保在布局完成后设置焦点
                 UiEventUtils.postToUiThread(channelList, () -> {
-                    // 遍历所有项目，找到第一个频道项并设置焦点
                     boolean focusSet = false;
-                    
-                    // 遍历适配器中的所有项目，找到第一个频道项
                     for (int position = 0; position < channelAdapter.getItemCount(); position++) {
-                        // 使用getChannelIndicesForPosition来确定该位置是否是频道项
                         int[] indices = channelAdapter.getChannelIndicesForPosition(position);
                         int channelIndex = indices[1];
-                        
-                        // 如果channelIndex >= 0，说明这是一个频道项，而不是组标题
                         if (channelIndex >= 0) {
-                            // 滚动到该频道项
                             channelList.scrollToPosition(position);
-                            
-                            // 使用Handler.postDelayed确保在布局完成后设置焦点
                             int finalPosition = position;
                             UiEventUtils.postToUiThread(new android.os.Handler(), () -> {
-                                // 等待布局完成后再尝试设置焦点
                                 RecyclerView.ViewHolder viewHolder = channelList.findViewHolderForAdapterPosition(finalPosition);
                                 if (viewHolder != null) {
                                     viewHolder.itemView.requestFocus();
                                 } else {
-                                    // 如果ViewHolder不可用，等待布局完成
                                     channelList.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                                         @Override
                                         public void onLayoutChange(View v, int left, int top, int right, int bottom, 
@@ -2109,7 +1873,6 @@ public class MainActivity extends AppCompatActivity implements
                                             if (finalViewHolder != null) {
                                                 finalViewHolder.itemView.requestFocus();
                                             }
-                                            // 移除监听器以避免内存泄漏
                                             channelList.removeOnLayoutChangeListener(this);
                                         }
                                     });
@@ -2120,8 +1883,7 @@ public class MainActivity extends AppCompatActivity implements
                             break; // 找到第一个频道后退出循环
                         }
                     }
-                    
-                    // 如果没有找到频道项（例如，组中没有频道），则设置焦点到组标题
+
                     if (!focusSet && channelAdapter.getItemCount() > 0) {
                         int groupHeaderPosition = 0;
                         channelList.scrollToPosition(groupHeaderPosition);
@@ -2131,7 +1893,6 @@ public class MainActivity extends AppCompatActivity implements
                             if (viewHolder != null) {
                                 viewHolder.itemView.requestFocus();
                             } else {
-                                // 等待布局完成后设置焦点
                                 channelList.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                                     @Override
                                     public void onLayoutChange(View v, int left, int top, int right, int bottom, 
@@ -2152,29 +1913,18 @@ public class MainActivity extends AppCompatActivity implements
         }
     }
 
-    /**
-     * 隐藏左侧EPG抽屉
-     */
     private void hideLeftEpgDrawer() {
         if (leftEpgDrawer != null && leftEpgDrawer.getVisibility() == View.VISIBLE) {
             leftEpgDrawer.setVisibility(View.GONE);
         }
     }
 
-    /**
-     * 隐藏左侧二级抽屉
-     */
     private void hideLeftSubDrawer() {
         if (leftSubDrawer != null && leftSubDrawer.getVisibility() == View.VISIBLE) {
             leftSubDrawer.setVisibility(View.GONE);
         }
     }
 
-    /**
-     * 查找频道所在的组索引
-     * @param channel 频道对象
-     * @return 组索引，如果未找到则返回-1
-     */
     private int findGroupIndexForChannel(Channel channel) {
         if (channelGroups != null && channel != null) {
             for (int i = 0; i < channelGroups.size(); i++) {
@@ -2187,12 +1937,6 @@ public class MainActivity extends AppCompatActivity implements
         return -1;
     }
 
-    /**
-     * 查找频道在指定组内的索引
-     * @param groupIndex 组索引
-     * @param channel 频道对象
-     * @return 频道在组内的索引，如果未找到则返回-1
-     */
     private int findChannelIndexInGroup(int groupIndex, Channel channel) {
         if (channelGroups != null && groupIndex >= 0 && groupIndex < channelGroups.size()) {
             ChannelGroup group = channelGroups.get(groupIndex);
@@ -2203,11 +1947,7 @@ public class MainActivity extends AppCompatActivity implements
         return -1;
     }
 
-    /**
-     * 查找频道在列表中的组索引和频道索引
-     * @param channel 要查找的频道
-     * @return 包含组索引和频道索引的数组，如果未找到则返回[-1, -1]
-     */
+
     private int[] findChannelIndices(Channel channel) {
         if (channelGroups != null && channel != null) {
             for (int groupIndex = 0; groupIndex < channelGroups.size(); groupIndex++) {
@@ -2222,11 +1962,7 @@ public class MainActivity extends AppCompatActivity implements
         }
         return new int[]{-1, -1};
     }
-    
-    /**
-     * 获取要播放的频道
-     * @return 要播放的频道，如果未找到则返回null
-     */
+
     private Channel getChannelToPlay() {
         if (channelGroups == null || channelGroups.isEmpty()) {
             return null;
@@ -2316,29 +2052,23 @@ public class MainActivity extends AppCompatActivity implements
         }
         
         // 注销夏杰语音接收器
-        if (aiOpenReceiver != null) {
-            try {
-                unregisterReceiver(aiOpenReceiver);
-            } catch (IllegalArgumentException e) {
-                // 接收器可能已经注销
-                LogUtil.w(TAG, "尝试注销AI语音接收器时出错: " + e.getMessage());
-            }
-            aiOpenReceiver = null;
-        }
-        
-        // 重置初始化标志，确保下次创建时正确初始化
+        // if (aiOpenReceiver != null) {
+        //    try {
+        //        unregisterReceiver(aiOpenReceiver);
+        //    } catch (IllegalArgumentException e) {
+        //        // 接收器可能已经注销
+        //       LogUtil.w(TAG, "尝试注销AI语音接收器时出错: " + e.getMessage());
+        //    }
+        //     aiOpenReceiver = null;
+        // }
+
         isPlayerManagerInitialized = false;
-        
-        // 移除首选项变化监听器
+
         // settingsManager.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener);
 
-        // ========== 释放新架构组件 ==========
         releaseArchitectureComponents();
     }
 
-    /**
-     * 释放新架构组件资源
-     */
     private void releaseArchitectureComponents() {
         // 释放 Controllers
         if (splashScreenController != null) {
@@ -2388,10 +2118,7 @@ public class MainActivity extends AppCompatActivity implements
             settingModule.unregisterUpdateReceiver();
         }
     }
-    
-    /**
-     * 检查是否有任何菜单打开
-     */
+
     private boolean isAnyMenuOpen() {
         if (mainMenuManager != null) {
             return mainMenuManager.isAnyMenuVisible();
@@ -2403,11 +2130,6 @@ public class MainActivity extends AppCompatActivity implements
             (drawerLayout != null && drawerLayout.isDrawerOpen(GravityCompat.START));
     }
 
-
-
-    /**
-     * 取消所有与MainActivity相关的计时器任务
-     */
     private void cancelAllTimers() {
         // 取消加载进度条的超时隐藏任务
         cancelLoadingProgressTimeout();
@@ -2463,9 +2185,7 @@ public class MainActivity extends AppCompatActivity implements
         }
         return super.onKeyDown(keyCode, event);
     }
-    
 
-    
     private boolean handleBack() {
         if (drawerLayout != null) {
             if (settingModule != null && settingModule.isSubSettingsVisible()) {
@@ -2675,13 +2395,7 @@ public class MainActivity extends AppCompatActivity implements
         }
         return channelAdapter;
     }
-    
-    /**
-     * 创建主菜单容器
-     * @param firstMenuWidth 一级菜单宽度
-     * @param secondMenuWidth 二级菜单宽度
-     * @return 主菜单容器LinearLayout
-     */
+
     private LinearLayout createMainMenuContainer(int firstMenuWidth, int secondMenuWidth) {
         LinearLayout mainMenuContainer = new LinearLayout(this);
         mainMenuContainer.setOrientation(LinearLayout.VERTICAL);
