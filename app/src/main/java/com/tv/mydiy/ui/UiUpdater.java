@@ -64,10 +64,7 @@ public class UiUpdater {
         // 确保EpgController有正确的ChannelAdapter引用
         if (epgController != null && channelAdapter != null) {
             epgController.updateChannelAdapter(channelAdapter);
-            
-            // 应用启动时自动加载EPG数据，但不显示，只进行匹配
-            // 这样当用户开启EPG显示时，数据已经准备就绪
-            // 为了不影响启动速度，将EPG加载移到后台线程
+
             new Thread(() -> {
                 epgController.loadEpgData(new EpgManager.OnEpgLoadListener() {
                     @Override
@@ -85,10 +82,7 @@ public class UiUpdater {
             }).start();
         }
     }
-    
-    /**
-     * 根据设置更新显示选项（时间、网速等）
-     */
+
     public void updateDisplaySettings() {
         if (settingsManager == null || isUpdatingDisplaySettings) {
             return;
@@ -144,41 +138,27 @@ public class UiUpdater {
             isUpdatingDisplaySettings = false;
         }
     }
-    
-    /**
-     * 更新时间显示
-     */
+
     public void updateTimeDisplay() {
         if (timeDisplay != null && timeDisplay.getVisibility() == View.VISIBLE) {
             String currentTime = timeFormat.format(new Date());
-            
-            // 检查当前文本是否与新文本相同，避免不必要的UI更新
             UiUtils.updateTextSafely(timeDisplay, currentTime);
         }
     }
 
-    /**
-     * 开始时间更新
-     */
     public void startTimeUpdater() {
         stopTimeUpdater(); // 先停止之前的更新任务
         if (handlerManager != null && timeRunnable != null) {
             handlerManager.getTimeHandler().post(timeRunnable);
         }
     }
-    
-    /**
-     * 停止时间更新
-     */
+
     public void stopTimeUpdater() {
         if (handlerManager != null && timeRunnable != null) {
             handlerManager.getTimeHandler().removeCallbacks(timeRunnable);
         }
     }
-    
-    /**
-     * 启动网络速度监控
-     */
+
     public void startNetworkSpeedMonitoring() {
         // 初始化网络速度更新任务
         networkSpeedRunnable = new NetworkSpeedRunnable(this);
@@ -283,4 +263,5 @@ public class UiUpdater {
             }
         }
     }
+
 }
