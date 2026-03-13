@@ -13,12 +13,7 @@ public class ChannelParserManager {
     public ChannelParserManager(com.tv.mydiy.network.NetworkManager networkManager) {
         this.networkManager = networkManager;
     }
-    
-    /**
-     * 从URL解析频道列表
-     * @param url M3U文件URL
-     * @param callback 回调接口
-     */
+
     public void parseFromUrlAsync(String url, ChannelParserCallback callback) {
         if (networkManager == null) {
             if (callback != null) {
@@ -53,12 +48,7 @@ public class ChannelParserManager {
             }
         });
     }
-    
-    /**
-     * 从主地址解析频道列表，支持多个备用地址
-     * @param mainUrl 主地址，包含多个备用频道清单地址
-     * @param callback 回调接口
-     */
+
     public void parseFromMainUrlWithFallbackAsync(String mainUrl, ChannelParserCallback callback) {
         if (networkManager == null) {
             if (callback != null) {
@@ -116,13 +106,7 @@ public class ChannelParserManager {
             }
         });
     }
-    
-    /**
-     * 依次尝试从URL列表中加载频道列表
-     * @param urls URL列表
-     * @param index 当前尝试的索引
-     * @param callback 回调接口
-     */
+
     private void tryNextUrl(List<String> urls, int index, ChannelParserCallback callback) {
         if (index >= urls.size()) {
             // 所有URL都尝试完毕仍未成功
@@ -171,12 +155,10 @@ public class ChannelParserManager {
             }
         });
     }
-    
-    /**
-     * 频道解析回调接口
-     */
+
     public interface ChannelParserCallback {
         void onSuccess(List<ChannelGroup> channelGroups);
         void onError(String error);
     }
+
 }
