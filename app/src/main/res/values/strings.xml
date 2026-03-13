@@ -4,7 +4,7 @@
     <string name="channel_info_default">请选择频道</string>
     <string name="loading_channels">正在加载频道列表...</string>
     <string name="no_channels">暂无频道数据</string>
-    <string name="default_channel_url">https://gitee.com/JR158/DIR/raw/master/htsrc.gz</string>
+    <string name="default_channel_url">https://example.com/channles.m3u.gz.txt</string>
     
     <!-- 频道列表相关 -->
     <string name="channel_info">频道信息</string>
@@ -59,4 +59,5 @@
     
     <!-- 分组展开/收起描述 -->
     <string name="expand_collapse_desc">展开或收起分组</string>
+
 </resources>
