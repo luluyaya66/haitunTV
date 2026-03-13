@@ -49,12 +49,7 @@ public class NetworkManager {
                 dispatcher
         ).build();
     }
-    
-    /**
-     * 异步获取URL内容
-     * @param urlString URL地址
-     * @param callback 回调接口
-     */
+
     public void fetchUrlContentAsync(String urlString, NetworkCallback callback) {
         executorService.execute(() -> {
             // 为网络请求添加标记，解决StrictMode的UntaggedSocketViolation问题
@@ -81,13 +76,7 @@ public class NetworkManager {
             }
         });
     }
-    
-    /**
-     * 同步获取URL内容
-     * @param urlString URL地址
-     * @return 返回获取到的内容
-     * @throws IOException 网络异常
-     */
+
     public String fetchUrlContent(String urlString) throws IOException {
         String cachedContent = cacheUtil.get("network_" + urlString, String.class, Constants.NETWORK_CACHE_DURATION_MILLIS);
         if (cachedContent != null) {
@@ -208,33 +197,20 @@ public class NetworkManager {
         }
     }
     
-    /**
-     * 检查字节流是否为gzip格式
-     * @param bytes 字节流
-     * @return 是否为gzip格式
-     */
+
     private boolean isGzipStream(byte[] bytes) {
         // GZIP文件头部为0x1f8b
         return bytes.length > 2 && bytes[0] == (byte) 0x1f && bytes[1] == (byte) 0x8b;
     }
-    
-    /**
-     * 处理可能的嵌套GZ压缩
-     * @param inputStream 输入流
-     * @param url URL地址（用于日志）
-     * @return 处理后的输入流
-     */
+
     private InputStream handleNestedGzip(InputStream inputStream, String url) {
         try {
-            // 检查是否是嵌套的GZIP文件
             PushbackInputStream pushbackInputStream = new PushbackInputStream(inputStream, 2);
             byte[] header = new byte[2];
             int bytesRead = pushbackInputStream.read(header);
             if (bytesRead == 2) {
                 pushbackInputStream.unread(header, 0, bytesRead);
-                // GZIP文件头部为0x1f8b
                 if (header[0] == (byte) 0x1f && header[1] == (byte) 0x8b) {
-                    // 是GZIP格式，解压后再检查是否还是GZIP格式（嵌套压缩）
                     GZIPInputStream gzipInputStream = new GZIPInputStream(pushbackInputStream);
                     return handleNestedGzip(gzipInputStream, url + " (nested)");
                 }
@@ -246,12 +222,10 @@ public class NetworkManager {
         }
     }
 
-    /**
-     * 网络请求回调接口
-     */
     public interface NetworkCallback {
         void onSuccess(String content);
         void onError(String error);
     }
+
 
 }
