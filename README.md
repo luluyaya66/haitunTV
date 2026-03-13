@@ -58,10 +58,10 @@
 
 
 ## 参考应用画面
-<img width=800 src=屏幕截图 2026-02-18 165356.png>
-<img width=800 src=屏幕截图 2026-02-18 165457.png>
-<img width=800 src=屏幕截图 2026-02-18 165756.png>
-<img width=800 src=屏幕截图 2026-02-18 170109.png>
+<img width=800 src=165356.png>
+<img width=800 src=165457.png>
+<img width=800 src=165756.png>
+<img width=800 src=170109.png>
 
 ## 系统要求
 
