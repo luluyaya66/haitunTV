@@ -17,11 +17,7 @@ public class FavoriteManager {
     public FavoriteManager(Context context) {
         prefs = context.getSharedPreferences(FAVORITE_PREFS_NAME, Context.MODE_PRIVATE);
     }
-    
-    /**
-     * 添加频道到收藏
-     * @param channel 频道对象
-     */
+
     public void addFavorite(Channel channel) {
         if (channel != null && channel.getName() != null) {
             Set<String> favorites = getFavoriteChannelNames();
@@ -30,11 +26,7 @@ public class FavoriteManager {
             Log.d(TAG, "添加收藏: " + channel.getName());
         }
     }
-    
-    /**
-     * 从收藏中移除频道
-     * @param channel 频道对象
-     */
+
     public void removeFavorite(Channel channel) {
         if (channel != null && channel.getName() != null) {
             Set<String> favorites = getFavoriteChannelNames();
@@ -43,12 +35,7 @@ public class FavoriteManager {
             Log.d(TAG, "移除收藏: " + channel.getName());
         }
     }
-    
-    /**
-     * 检查频道是否已被收藏
-     * @param channel 频道对象
-     * @return 是否已收藏
-     */
+
     public boolean isFavorite(Channel channel) {
         if (channel != null && channel.getName() != null) {
             Set<String> favorites = getFavoriteChannelNames();
@@ -56,31 +43,18 @@ public class FavoriteManager {
         }
         return false;
     }
-    
-    /**
-     * 获取所有收藏的频道名称
-     * @return 收藏的频道名称集合
-     */
+
     public Set<String> getFavoriteChannelNames() {
         Set<String> defaultSet = new HashSet<>();
         return prefs.getStringSet(FAVORITE_CHANNELS_KEY, defaultSet);
     }
-    
-    /**
-     * 保存收藏的频道名称
-     * @param favorites 频道名称集合
-     */
+
     private void saveFavoriteChannels(Set<String> favorites) {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putStringSet(FAVORITE_CHANNELS_KEY, favorites);
         editor.apply();
     }
-    
-    /**
-     * 切换频道收藏状态
-     * @param channel 频道对象
-     * @return 新的收藏状态
-     */
+
     public boolean toggleFavorite(Channel channel) {
         if (channel != null && channel.getName() != null) {
             boolean isFavorite = isFavorite(channel);
@@ -97,6 +71,7 @@ public class FavoriteManager {
         Log.d(TAG, "无法切换收藏状态: channel或channel.getName()为null");
         return false;
     }
+
 
 
 }
