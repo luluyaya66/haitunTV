@@ -25,18 +25,13 @@ public class AuthorizationManager {
 
     private final Context context;
     private final Handler handler;
-    // 60分钟检查一次
 
     public AuthorizationManager(Context context) {
         this.context = context;
         this.handler = new Handler(Looper.getMainLooper());
     }
 
-    /**
-     * 延迟检查并显示授权对话框，遵循授权弹窗延迟初始化规范
-     */
     public void checkAndShowAuthorizationDialog() {
-        // 根据授权弹窗延迟初始化规范，使用handler.postDelayed()延后执行
         handler.postDelayed(() -> {
             if (!isAuthorizationValid()) {
                 // 在主线程中显示对话框
@@ -48,11 +43,9 @@ public class AuthorizationManager {
     }
 
     private void showAuthorizationDialog() {
-        // 使用自定义样式创建对话框，实现蓝色半透明背景
         AlertDialog.Builder builder = new AlertDialog.Builder(context, R.style.AuthDialogStyle);
         builder.setTitle("应用授权验证");
-        
-        // 检查是否是首次授权或授权已过期
+
         if (isFirstRun() || !isAuthorizationValid()) {
             String message;
             if (!isAuthorizationValid() && !isFirstRun()) {
@@ -110,7 +103,6 @@ public class AuthorizationManager {
             return false;
         }
 
-        // 检查是否在有效期内
         long currentTime = System.currentTimeMillis();
         return (currentTime - authDate) < VALIDITY_PERIOD;
     }
@@ -120,82 +112,13 @@ public class AuthorizationManager {
         prefs.edit().putLong(KEY_AUTH_DATE, System.currentTimeMillis()).apply();
     }
 
-    // 提取密码计算逻辑为独立方法，保持原有逻辑不变
+    // 提取密码计算逻辑为独立方法，保持原有逻辑不变, 此处删除发布，可自行设计密码规则
     private String calculateCorrectPassword() {
         try {
-            // 固定基准日期 2007年11月5日 (UTC时间)
-            Calendar baseDate = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-            baseDate.set(2007, 10, 5, 0, 0, 0); // 注意：月份从0开始，所以11月是10
-            baseDate.set(Calendar.MILLISECOND, 0);
-
-            // 当前日期 (UTC时间)
-            Calendar currentDate = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-
-            // 计算日期差值（天数）
-            long baseTime = baseDate.getTimeInMillis();
-            long currentTime = currentDate.getTimeInMillis();
-            long diffMillis = currentTime - baseTime;
-            int dateDiff = (int) (diffMillis / (24 * 60 * 60 * 1000)); // 转换为天数
-
-            // 使用SHA-256哈希算法
-            String hashInput = String.valueOf(dateDiff);
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hashBytes = digest.digest(hashInput.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-
-            // 转换为十六进制字符串
-            StringBuilder hexString = new StringBuilder();
-            for (byte b : hashBytes) {
-                String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) {
-                    hexString.append('0');
-                }
-                hexString.append(hex);
-            }
-            String hexDig = hexString.toString();
-
-            // 取哈希值中间6位数字
-            int middleIndex = hexDig.length() / 2;
-            String middlePart = hexDig.substring(Math.max(0, middleIndex - 3),
-                    Math.min(hexDig.length(), middleIndex + 3));
-
-            // 确保是数字（提取数字字符）
-            StringBuilder digitChars = new StringBuilder();
-            for (char c : middlePart.toCharArray()) {
-                if (Character.isDigit(c)) {
-                    digitChars.append(c);
-                }
-            }
-
-            // 如果数字不足6位，补充更多数字
-            int attempts = 0;
-            while (digitChars.length() < 6 && attempts < 10) {
-                // 生成补充哈希
-                String additionalInput = hashInput + digitChars.length() + attempts;
-                byte[] additionalHashBytes = digest.digest(additionalInput.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-
-                StringBuilder additionalHex = new StringBuilder();
-                for (byte b : additionalHashBytes) {
-                    String hex = Integer.toHexString(0xff & b);
-                    if (hex.length() == 1) {
-                        additionalHex.append('0');
-                    }
-                    additionalHex.append(hex);
-                }
-
-                // 从补充哈希中提取数字
-                for (char c : additionalHex.toString().toCharArray()) {
-                    if (Character.isDigit(c) && digitChars.length() < 6) {
-                        digitChars.append(c);
-                    }
-                }
-
+            
                 attempts++;
             }
 
-            // 获取最终密码（最多6位数字）
-            return digitChars.length() > 6 ?
-                    digitChars.substring(0, 6) :
-                    digitChars.toString();
         } catch (Exception e) {
             Log.e(TAG, "计算正确密码时出错", e);
             return "ERROR";
@@ -213,12 +136,10 @@ public class AuthorizationManager {
         }
     }
 
-    /**
-     * 销毁资源，移除所有待处理的回调
-     */
     public void destroy() {
         if (handler != null) {
             handler.removeCallbacksAndMessages(null);
         }
     }
+
 }
