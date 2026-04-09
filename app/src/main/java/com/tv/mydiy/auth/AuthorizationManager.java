@@ -21,7 +21,7 @@ public class AuthorizationManager {
     private static final String TAG = "AuthorizationManager";
     private static final String PREF_NAME = "app_prefs";
     private static final String KEY_AUTH_DATE = "auth_date";
-    private static final long VALIDITY_PERIOD = 365L * 24 * 60 * 60 * 1000; // 365天的有效期
+    private static final long VALIDITY_PERIOD = 365L * 24 * 60 * 60 * 1000; 
 
     private final Context context;
     private final Handler handler;
